@@ -1,0 +1,22 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+pydantic>=2.7
+pydantic-settings>=2.3
+sqlalchemy>=2.0
+psycopg[binary]>=3.2
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.5
+xgboost>=2.1
+langgraph>=0.2
+pypdf>=4.2
+# OCR for scanned PDFs and photos (runs locally; downloads an English model on first use)
+rapidocr>=3.4
+onnxruntime>=1.18
+pypdfium2>=4.30
+pillow>=10.3
+anthropic>=0.40
+httpx>=0.27
+pytest>=8.2
+reportlab>=4.2  # PDF comparison reports (and scripts/make_sample_pdfs.py)

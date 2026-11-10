@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProcureAI – Suppliers</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #16202c; --ink-2: #52514e; --muted: #5d6b7a; --line: #dfe4ea; --grid: #e1e0d9;
+    --accent: #0f5fd7; --series-1: #2a78d6; --series-2: #eb6834; --track: #e9edf2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11161c; --card: #1a212a; --ink: #e7ecf2; --ink-2: #c3c2b7; --muted: #98a6b5; --line: #2c3743; --grid: #2c3540;
+      --accent: #5b9bff; --series-1: #3987e5; --series-2: #d95926; --track: #263140; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, "Segoe UI", sans-serif; }
+  main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 64px; }
+  header { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  h1 { font-size: 22px; margin: 0; } h2 { font-size: 16px; margin: 0 0 4px; } h3 { font-size: 14px; margin: 0 0 2px; }
+  nav a { color: var(--muted); text-decoration: none; margin-right: 14px; padding-bottom: 2px; }
+  nav a.on { color: var(--ink); font-weight: 600; border-bottom: 2px solid var(--accent); }
+  .sub { color: var(--muted); margin: 2px 0 18px; }
+  .note { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .tile .k { font-size: 12px; color: var(--muted); } .tile .v { font-size: 26px; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .tile .d { font-size: 12.5px; color: var(--ink-2); }
+  .filters { display: flex; gap: 14px; align-items: end; flex-wrap: wrap; margin-bottom: 12px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  th.l, td.l { text-align: left; }
+  tbody tr.pick { cursor: pointer; } tbody tr.pick:hover { background: var(--bg); }
+  tr.sel { background: var(--bg); box-shadow: inset 3px 0 0 var(--accent); }
+  td button.name { all: unset; cursor: pointer; font-weight: 600; } td button.name:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .meter { display: inline-grid; grid-template-columns: 110px 42px; gap: 8px; align-items: center; }
+  .meter i { display: block; height: 8px; border-radius: 4px; background: var(--track); overflow: hidden; }
+  .meter b { display: block; height: 100%; border-radius: 4px; background: var(--series-1); }
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .chart { position: relative; }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart text { fill: var(--muted); font-size: 11px; font-family: inherit; }
+  .chart text.dl { fill: var(--ink-2); font-size: 11.5px; }
+  .legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--ink-2); margin: 2px 0 4px; }
+  .key { display: inline-block; width: 14px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 6px; }
+  .tip { position: absolute; pointer-events: none; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font-size: 12.5px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.14); white-space: nowrap; display: none; z-index: 2; }
+  .tip .t { color: var(--muted); font-size: 11.5px; } .tip b { font-variant-numeric: tabular-nums; }
+  .stats { display: flex; gap: 26px; flex-wrap: wrap; margin: 10px 0 16px; }
+  .stats div span { display: block; font-size: 12px; color: var(--muted); } .stats div b { font-size: 18px; font-variant-numeric: tabular-nums; }
+  .tag { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-2); }
+  @media (max-width: 760px) { .tiles { grid-template-columns: 1fr 1fr; } .charts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>ProcureAI</h1>
+    <nav><a href="/">Compare quotations</a><a href="/suppliers" class="on">Suppliers</a></nav>
+  </header>
+  <p class="sub">How every supplier has actually performed: delivery, quality, lead times and prices from order history.</p>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="card">
+    <h2>Supplier scorecard</h2>
+    <p class="note">On-time rate over the last 12 months. Select a supplier to see its history.</p>
+    <div class="filters">
+      <div><label for="cat">Category</label><select id="cat"></select></div>
+      <div><label for="sort">Sort by</label><select id="sort">
+        <option value="on_time_rate_12m">On-time rate (12 months)</option><option value="spend_12m_usd">Spend (12 months)</option>
+        <option value="avg_defect_rate">Defect rate</option><option value="median_lead_days">Lead time</option><option value="name">Name</option></select></div>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th class="l">Supplier</th><th class="l">Country</th><th>Orders (12m)</th><th>Spend (12m)</th><th class="l">On-time (12m)</th>
+        <th>Change vs. earlier</th><th>Avg days late</th><th>Defect rate</th><th>Median lead</th></tr></thead>
+      <tbody id="rows"></tbody></table></div>
+  </section>
+
+  <section class="card" id="detail" hidden></section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pct = (n, d = 0) => n == null ? "n/a" : (n * 100).toFixed(d) + "%";
+const usd = n => n >= 1e6 ? "$" + (n / 1e6).toFixed(2) + "M" : n >= 1e4 ? "$" + Math.round(n / 1e3) + "K" : "$" + Math.round(n).toLocaleString("en-US");
+const price = n => "$" + (n < 1 ? n.toFixed(4) : n.toFixed(2));
+const nice = c => c.replace(/_/g, " ");
+// change in percentage points, with an arrow so direction never relies on colour
+const delta = (now, before) => {
+  if (now == null || before == null) return "n/a";
+  const pp = (now - before) * 100;
+  return Math.abs(pp) < 0.5 ? "– steady" : `${pp > 0 ? "▲" : "▼"} ${Math.abs(pp).toFixed(1)} pp`;
+};
+let data, selected = null;
+
+async function init() {
+  data = await (await fetch("/api/dashboard")).json();
+  const t = data.totals;
+  $("tiles").innerHTML = [
+    ["Suppliers", t.suppliers, `${data.categories.length} product categories`],
+    ["Orders, last 12 months", t.orders_12m.toLocaleString("en-US"), `${t.orders.toLocaleString("en-US")} in the full history`],
+    ["On-time delivery, last 12 months", pct(t.on_time_rate_12m, 1), `${delta(t.on_time_rate_12m, t.on_time_rate_before)} vs. earlier`],
+    ["Spend, last 12 months", usd(t.spend_12m_usd), `Average defect rate ${pct(t.avg_defect_rate_12m, 1)}`],
+  ].map(([k, v, d]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${esc(d)}</div></div>`).join("");
+  $("cat").innerHTML = `<option value="">All categories</option>` + data.categories.map(c => `<option value="${esc(c)}">${esc(nice(c))}</option>`).join("");
+  $("cat").onchange = $("sort").onchange = table;
+  table();
+}
+
+function table() {
+  const cat = $("cat").value, key = $("sort").value;
+  const asc = ["avg_defect_rate", "median_lead_days", "name"].includes(key);
+  const list = data.suppliers.filter(s => !cat || s.categories.includes(cat))
+    .sort((a, b) => key === "name" ? a.name.localeCompare(b.name) : (asc ? a[key] - b[key] : b[key] - a[key]));
+  $("rows").innerHTML = list.map(s => `<tr class="pick ${s.id === selected ? "sel" : ""}" data-id="${s.id}">
+      <td class="l"><button class="name">${esc(s.name)}</button></td><td class="l">${esc(s.country)}</td>
+      <td>${s.orders_12m}</td><td>${usd(s.spend_12m_usd)}</td>
+      <td class="l"><span class="meter"><i><b style="width:${(s.on_time_rate_12m ?? 0) * 100}%"></b></i><span>${pct(s.on_time_rate_12m)}</span></span></td>
+      <td>${delta(s.on_time_rate_12m, s.on_time_rate_before)}</td><td>${s.avg_days_late_when_late.toFixed(1)}</td>
+      <td>${pct(s.avg_defect_rate, 1)}</td><td>${s.median_lead_days.toFixed(0)} d</td></tr>`).join("");
+  $("rows").querySelectorAll("tr").forEach(tr => tr.onclick = () => show(+tr.dataset.id));
+}
+
+async function show(id) {
+  selected = id; table();
+  const d = await (await fetch(`/api/suppliers/${id}/history`)).json();
+  const s = d.supplier, p = d.profile, labels = d.quarters.map(q => q.period);
+  const cats = Object.keys(d.prices);
+  const box = $("detail");
+  box.hidden = false;
+  box.innerHTML = `
+    <h2>${esc(s.name)}</h2>
+    <p class="note">${esc(s.country)} · ${s.years_active} years active · ${esc(s.certifications)} · ${cats.map(c => `<span class="tag">${esc(nice(c))}</span>`).join(" ")}</p>
+    <div class="stats">
+      <div><span>Orders on record</span><b>${p.orders}</b></div>
+      <div><span>On-time, all history</span><b>${pct(p.on_time_rate)}</b></div>
+      <div><span>On-time, last 12 months</span><b>${pct(p.on_time_rate_last_12m)}</b></div>
+      <div><span>Avg days late when late</span><b>${p.avg_days_late_when_late.toFixed(1)}</b></div>
+      <div><span>Avg defect rate</span><b>${pct(p.avg_defect_rate, 1)}</b></div>
+    </div>
+    <div class="charts">
+      <div><h3>On-time delivery rate</h3><p class="note">Share of orders delivered on time, by quarter ordered</p><div class="chart" id="c1"></div></div>
+      <div><h3>Lead time: promised vs. actual</h3><p class="note">Average days, by quarter ordered</p><div class="chart" id="c2"></div></div>
+      <div><h3>Median unit price ${cats.length > 1 ? `<select id="pc" aria-label="Category">${cats.map(c => `<option value="${esc(c)}">${esc(nice(c))}</option>`).join("")}</select>` : `<span class="tag">${esc(nice(cats[0]))}</span>`}</h3>
+        <p class="note">USD per unit, by quarter ordered</p><div class="chart" id="c3"></div></div>
+      <div><h3>By shipping mode</h3><p class="note">Whole history</p><table>
+        <tr><th class="l">Mode</th><th>Orders</th><th>On-time</th><th>Promised</th><th>Actual</th></tr>
+        ${d.by_mode.map(m => `<tr><td class="l">${esc(m.mode)}</td><td>${m.orders}</td><td>${pct(m.on_time_rate)}</td><td>${m.median_promised_days.toFixed(0)} d</td><td>${m.median_actual_days.toFixed(0)} d</td></tr>`).join("")}</table></div>
+    </div>
+    <h3 style="margin-top:18px">Most recent orders</h3>
+    <div class="scroll"><table>
+      <tr><th class="l">Ordered</th><th class="l">Category</th><th>Quantity</th><th>Unit price</th><th class="l">Mode</th><th>Promised</th><th>Actual</th><th class="l">Outcome</th></tr>
+      ${d.recent_orders.map(o => `<tr><td class="l">${o.order_date}</td><td class="l">${esc(nice(o.category))}</td><td>${o.quantity.toLocaleString("en-US")}</td><td>${price(o.unit_price_usd)}</td>
+        <td class="l">${esc(o.shipping_mode)}</td><td>${o.promised_lead_days} d</td><td>${o.actual_lead_days} d</td>
+        <td class="l">${o.late ? `✕ Late by ${o.actual_lead_days - o.promised_lead_days} d` : "✓ On time"}</td></tr>`).join("")}</table></div>`;
+
+  lineChart($("c1"), { labels, yMin: 0, yMax: 1, fmt: v => pct(v), series: [{ name: "On-time rate", color: "var(--series-1)", values: d.quarters.map(q => q.on_time_rate) }] });
+  lineChart($("c2"), { labels, yMin: 0, fmt: v => v.toFixed(1) + " d", tick: v => v.toFixed(0) + " d", series: [
+    { name: "Promised", color: "var(--series-1)", values: d.quarters.map(q => q.promised_lead_days) },
+    { name: "Actual", color: "var(--series-2)", values: d.quarters.map(q => q.actual_lead_days) }] });
+  const drawPrice = c => lineChart($("c3"), { labels, fmt: price, series: [{ name: "Median price", color: "var(--series-1)", values: d.prices[c].map(x => x.median_price_usd) }] });
+  drawPrice(cats[0]);
+  if ($("pc")) $("pc").onchange = e => drawPrice(e.target.value);
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* Minimal SVG line chart: one y-axis, hairline grid, 2px lines, crosshair tooltip listing every series. */
+function lineChart(el, { labels, series, fmt, tick = fmt, yMin, yMax }) {
+  const W = 520, H = 210, m = { l: 46, r: series.length > 1 ? 64 : 14, t: 10, b: 24 };
+  const all = series.flatMap(s => s.values).filter(v => v != null);
+  if (!all.length) { el.innerHTML = `<p class="note">No orders in this period.</p>`; return; }
+  let lo = yMin ?? Math.min(...all), hi = yMax ?? Math.max(...all);
+  if (yMin == null) lo -= (hi - lo) * 0.15 || lo * 0.05;
+  if (yMax == null) hi += (hi - lo) * 0.12 || hi * 0.05;
+  const n = labels.length, iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const x = i => m.l + (n === 1 ? iw / 2 : i * iw / (n - 1)), y = v => m.t + ih - (v - lo) / (hi - lo) * ih;
+  const ticks = [0, 1, 2, 3, 4].map(i => lo + (hi - lo) * i / 4);
+  const every = Math.ceil(n / 6);
+  const path = vals => { let d = "", pen = false; vals.forEach((v, i) => { if (v == null) { pen = false; return; } d += `${pen ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`; pen = true; }); return d; };
+
+  // direct labels at the line ends, nudged apart when two lines finish close together
+  const ends = series.map(s => { const i = s.values.findLastIndex(v => v != null); return { name: s.name, yy: y(s.values[i]) }; });
+  if (ends.length === 2 && Math.abs(ends[0].yy - ends[1].yy) < 13) { const up = ends[0].yy < ends[1].yy ? 0 : 1; const mid = (ends[0].yy + ends[1].yy) / 2; ends[up].yy = mid - 7; ends[1 - up].yy = mid + 7; }
+
+  el.innerHTML = (series.length > 1 ? `<div class="legend">${series.map(s => `<span><span class="key" style="border-color:${s.color}"></span>${esc(s.name)}</span>`).join("")}</div>` : "") +
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(series.map(s => s.name).join(" and "))} by quarter">
+      ${ticks.map(t => `<line x1="${m.l}" x2="${W - m.r}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)" stroke-width="1"/><text x="${m.l - 8}" y="${y(t) + 4}" text-anchor="end">${tick(t)}</text>`).join("")}
+      ${labels.map((l, i) => i % every === 0 ? `<text x="${x(i)}" y="${H - 6}" text-anchor="${i === 0 ? "start" : i === n - 1 ? "end" : "middle"}">${esc(l)}</text>` : "").join("")}
+      ${series.map(s => `<path d="${path(s.values)}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`).join("")}
+      ${series.length > 1 ? ends.map(e => `<text class="dl" x="${W - m.r + 8}" y="${e.yy + 4}">${esc(e.name)}</text>`).join("") : ""}
+      <line class="x" y1="${m.t}" y2="${m.t + ih}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>
+      ${series.map(s => `<circle class="dot" r="4.5" fill="${s.color}" stroke="var(--card)" stroke-width="2" visibility="hidden"/>`).join("")}
+      <rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent"/>
+    </svg><div class="tip"></div>`;
+
+  const svg = el.querySelector("svg"), tip = el.querySelector(".tip"), cross = svg.querySelector(".x"), dots = [...svg.querySelectorAll(".dot")];
+  const hide = () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); dots.forEach(c => c.setAttribute("visibility", "hidden")); };
+  svg.onpointerleave = hide;
+  svg.onpointermove = e => {
+    const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round((px - m.l) / (iw / Math.max(1, n - 1)))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+    tip.replaceChildren();
+    const head = document.createElement("div"); head.className = "t"; head.textContent = labels[i]; tip.append(head);
+    series.forEach((s, k) => {
+      const v = s.values[i];
+      dots[k].setAttribute("visibility", v == null ? "hidden" : "visible");
+      if (v != null) { dots[k].setAttribute("cx", x(i)); dots[k].setAttribute("cy", y(v)); }
+      const row = document.createElement("div"), key = document.createElement("span"), val = document.createElement("b");
+      key.className = "key"; key.style.borderColor = s.color; val.textContent = v == null ? "no orders" : fmt(v);
+      row.append(key, val, " " + s.name); tip.append(row);
+    });
+    tip.style.display = "block";
+    const left = x(i) / W * r.width, flip = left > r.width - tip.offsetWidth - 20;
+    tip.style.left = (flip ? left - tip.offsetWidth - 12 : left + 12) + "px";
+    tip.style.top = (svg.offsetTop + 8) + "px";
+  };
+}
+
+init();
+</script>
+</body>
+</html>

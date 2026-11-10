@@ -1,0 +1,19 @@
+PUNE ROTODYNE PVT LTD
+Plot 221, MIDC Chakan, Pune 410501, India
+GSTIN 27AAACR5055K1Z9
+
+Quotation: PR/Q/1126/092     Date: 07-Nov-2026
+
+Supplier: Pune Rotodyne Pvt Ltd
+
+Sr | Item                                  | Qty | Rate (USD) | Amount (USD)
+1  | Servo Motor 400W RD-400S (equivalent) | 500 | 29.50      | 14,750.00
+
+Grand Total: USD 14,750.00
+
+Notes:
+Price is FOB Nhava Sheva. Ocean freight, insurance and destination customs duty are to buyer's account.
+Dispatch within 10 days from PO.
+Payment 50% advance, balance against bill of lading.
+Bank charges outside India are borne by the buyer.
+Validity 10 days. Warranty 6 months.
